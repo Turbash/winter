@@ -1,0 +1,37 @@
+body{
+    margin: 0;
+    height: 100vh;
+    background: url("https://i.imgur.com/g0wxLWG.jpeg") center/cover;
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: Poppins, sans-serif;
+}
+
+.container{
+    text-align: center;
+    background: rgba(255,255,255,0.08);
+    padding: 30px;
+    border-radius: 14px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.3);
+    width: 350px;
+}
+
+h1{
+    margin: 0 0 10px;
+    font-size: 28px;
+    text-shadow: 0 0 6px #00e5ff;
+}
+
+.search-box input{
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    margin-top: 15px;
+    font-size: 16px;
+}
