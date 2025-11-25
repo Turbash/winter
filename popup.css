@@ -1,0 +1,28 @@
+body{
+    width: 220px;
+    padding: 15px;
+    font-family: Poppins, sans-serif;
+    background: url('https://i.imgur.com/Vn8ZQ.png');
+    backdrop-filter: blur(4px);
+    color: #fff;
+}
+
+h1{
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 5px #00dfff;
+}
+
+button{
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 8px;
+    width: 100%;
+    margin: 5px 0;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+}
+button:hover{
+    background: rgba(255,255,255,0.35);
+}

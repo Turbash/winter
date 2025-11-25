@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "Winter",
+    "version": "1.0",
+    "description": "A cool winter theme extension.",
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "winter.jpg"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content.js"],
+            "css": ["snow.css"]
+        }
+    ],
+    "permissions": ["storage"]
+}

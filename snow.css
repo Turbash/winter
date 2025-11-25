@@ -1,0 +1,29 @@
+.winter-snow-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 9999999;
+}
+
+.snowflake {
+    position: absolute;
+    top: -10px;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    animation: fall 6s linear infinite;
+}
+
+@keyframes fall {
+    from {
+        transform: translateY(-10vh);
+    }
+    to {
+        transform: translateY(110vh);
+    }
+}
