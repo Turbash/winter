@@ -58,25 +58,26 @@
         currentWindow: true,
       });
       if (!tab || !tab.id) return;
-      const results = await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        function: () => {
-          const root = document.documentElement;
-          const was = root.getAttribute("data-winter-frozen") === "true";
-          if (was) {
-            root.removeAttribute("data-winter-frozen");
-            document.body.style.filter = "";
-            return false;
-          } else {
-            root.setAttribute("data-winter-frozen", "true");
-            document.body.style.filter = "brightness(50%) blur(3px)";
-            return true;
-          }
-        },
-      });
-      const newState = !!(results && results[0] && results[0].result);
-      freezeBtn.innerText = newState ? "Unfreeze Screen" : "Freeze Screen";
-    } catch {}
+      if (tab.discarded) {
+        await chrome.tabs.reload(tab.id);
+        freezeBtn.innerText = "Freeze Screen";
+      } else {
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            document.body.style.filter = "brightness(30%) blur(8px)";
+            document.body.style.pointerEvents = "none";
+          },
+        });
+
+        setTimeout(async () => {
+          await chrome.tabs.discard(tab.id);
+          freezeBtn.innerText = "Unfreeze Screen";
+        }, 500);
+      }
+    } catch (e) {
+      console.error("Error toggling freeze:", e);
+    }
     chrome.tabs.onActivated.addListener(updateFreezeText);
     chrome.tabs.onUpdated.addListener(updateFreezeText);
   };
