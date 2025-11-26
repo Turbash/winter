@@ -7,6 +7,9 @@
         "default_popup": "popup.html",
         "default_icon": "winter.png"
     },
+    "background": {
+        "service_worker": "background.js"
+    },
     "chrome_url_overrides": {
         "newtab": "newtab.html"
     },
@@ -17,5 +20,12 @@
             "css": ["snow.css"]
         }
     ],
-    "permissions": ["storage","scripting","activeTab"]
+    "permissions": ["storage","scripting","activeTab","tabs"],
+    "host_permissions": ["<all_urls>"],
+    "web_accessible_resources": [
+        {
+            "resources": ["winter.png"],
+            "matches": ["<all_urls>"]
+        }
+    ]
 }
