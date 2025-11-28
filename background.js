@@ -80,14 +80,15 @@ async function checkAndFreezeInactiveTabs() {
         console.log(`Attempting to freeze tab ${tab.id}...`);
 
         const iconUrl = chrome.runtime.getURL("winter.png");
+        const videoUrl = chrome.runtime.getURL("freeze-animation.mp4");
 
         await chrome.scripting.executeScript({
           target: { tabId: tab.id },
-          func: (iconUrl) => {
+          func: (iconUrl, videoUrl) => {
             document.documentElement.setAttribute("data-winter-frozen", "true");
 
-            if (!document.title.startsWith("❄️ ")) {
-              document.title = "❄️ [Frozen] " + document.title;
+            if (!document.title.startsWith("[Frozen]")) {
+              document.title = "[Frozen] " + document.title;
             }
 
             const existingFavicons =
@@ -108,29 +109,46 @@ async function checkAndFreezeInactiveTabs() {
               left: 0;
               width: 100vw;
               height: 100vh;
-              background: linear-gradient(135deg, 
-                rgba(173, 216, 230, 0.3) 0%,
-                rgba(135, 206, 235, 0.4) 50%,
-                rgba(176, 224, 230, 0.3) 100%);
-              backdrop-filter: blur(12px) brightness(0.7);
+              background: rgba(173, 216, 230, 0.2);
               z-index: 2147483647;
               pointer-events: none;
             `;
-            overlay.innerHTML = `
-              <div style="
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 120px;
-                opacity: 0.4;
-                text-shadow: 0 0 30px rgba(255,255,255,0.8);
-              ">❄️</div>
+
+            const video = document.createElement("video");
+            video.style.cssText = `
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              opacity: 0.6;
+              mix-blend-mode: screen;
             `;
+            video.src = videoUrl;
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true;
+            video.playsInline = true;
+
+            overlay.appendChild(video);
+
+            const blurDiv = document.createElement("div");
+            blurDiv.style.cssText = `
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              backdrop-filter: blur(8px) brightness(0.7);
+              z-index: 1;
+            `;
+            overlay.appendChild(blurDiv);
+
             document.body.appendChild(overlay);
             document.body.style.pointerEvents = "none";
           },
-          args: [iconUrl],
+          args: [iconUrl, videoUrl],
         });
 
         await chrome.tabs.discard(tab.id);

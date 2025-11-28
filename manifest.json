@@ -20,11 +20,11 @@
             "css": ["snow.css"]
         }
     ],
-    "permissions": ["storage","scripting","activeTab","tabs"],
+    "permissions": ["storage", "scripting", "activeTab", "tabs"],
     "host_permissions": ["<all_urls>"],
     "web_accessible_resources": [
         {
-            "resources": ["winter.png"],
+            "resources": ["winter.png", "freeze-animation.mp4"],
             "matches": ["<all_urls>"]
         }
     ]
