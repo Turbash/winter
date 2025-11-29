@@ -7,8 +7,10 @@ body{
     justify-content: center;
     align-items: center;
     gap: 20px;
+    padding: 20px;
     color: white;
     font-family: Poppins, sans-serif;
+    box-sizing: border-box;
 }
 
 .container{
@@ -19,6 +21,7 @@ body{
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.3);
     width: 350px;
+    box-shadow: 0 8px 32px rgba(31,38,135,0.37);
 }
 /* 
 .weather{
@@ -119,19 +122,26 @@ h1{
 }
 
 .widget{
-    background-color: #1e1e1e;
-    border-radius: 12px;
+    background: rgba(173,216,230,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 32px rgba(31,38,135,0.37);
+    border: 1px solid rgba(255,255,255,0.18);
+    width: 350px;
+    height: 500px;
+    max-height: 80vh;
 }
 
 .spotify-controls{
     padding: 10px;
-    background: #000;
+    background: rgba(135,206,235,0.2);
+    backdrop-filter: blur(8px);
     display: flex;
     gap: 5px;
+    border-top: 1px solid rgba(255,255,255,0.15);
 }
 
 .spotify-wrapper{
@@ -142,23 +152,37 @@ h1{
 
 .spotify-input{
     width: 100%;
-    background: #333;
-    border: none;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.25);
     color: white;
     padding: 8px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 0.8rem;
+    outline: none;
+}
+
+.spotify-input::placeholder{
+    color: rgba(255,255,255,0.6);
+}
+
+.spotify-input:focus{
+    border-color: #00e5ff;
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
 }
 
 .iframe-container{
     flex-grow: 1;
-    background: #000;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
 }
 
 .news-header{
     padding: 15px;
-    background: #252525;
-    border-bottom: 2px solid #ff6600;
+    background: rgba(135,206,235,0.25);
+    backdrop-filter: blur(8px);
+    border-bottom: 2px solid rgba(0,229,255,0.5);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -167,21 +191,25 @@ h1{
 .news-header-title{
     margin: 0;
     font-size: 1.1rem;
+    color: white;
+    text-shadow: 0 0 6px #00e5ff;
 }
 
 .refresh-btn{
-    background: none;
-    border: 1px solid #b3b3b3;
-    color: #b3b3b3;
+    background: rgb(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
     cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
     font-size: 0.8rem;
+    transition: all 0.3s ease;
 }
 
 .refresh-btn:hover{
-    color:white;
-    border-color: white;
+    background: rgba(0,229,255,0.3);
+    color: 0 0 12px rgba(0, 229, 255, 0.5);
+    border-color: #00e5ff;
 }
 
 .news-list{
@@ -194,14 +222,12 @@ h1{
 
 .news-item{
     padding: 15px;
-    border-bottom: 1px solid #333;
-    transition: background 0.2s;
-    text-align: center;
-    padding-top: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.2s ease;
 }
 
 .news-item:hover{
-    background: #2a2a2a;
+    background: rgba(135,206,235,0.2);
 }
 
 .news-title{
@@ -211,13 +237,15 @@ h1{
     font-size: 0.95rem;
     font-weight: 500;
     margin-bottom: 5px;
+    transition: all 0.2s ease;
 }
 
 .news-title:hover{
-    color: #ff6600;
+    color: #00e5ff;
+    text-shadow: 0 0 8px rgba(0,229,255,0.6);
 }
 
 .news-meta{
     font-size: 0.75rem;
-    color: #b3b3b3;
+    color: rgba(255,255,255,0.6);
 }
