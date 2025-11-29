@@ -220,6 +220,23 @@ h1{
     flex-grow: 1;
 }
 
+.news-list::-webkit-scrollbar{
+    width: 8px;
+}
+
+.news-list::-webkit-scrollbar-track{
+    background: rgba(255,255,255,0.05);
+}
+
+.news-list::-webkit-scrollbar-thumb{
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+}
+
+.news-list::-webkit-scrollbar-thumb:hover{
+    background: rgba(0,229,255,0.5);
+}
+
 .news-item{
     padding: 15px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
