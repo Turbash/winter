@@ -6,7 +6,7 @@ This is my first browser extension ever. It is a cool winter themed extension wi
 
 ## Demo
 
-//Demo will come here
+https://github.com/user-attachments/assets/ee9e3702-bad4-4523-9215-8c6ef0f202bb
 
 ## How to run locally 
 
