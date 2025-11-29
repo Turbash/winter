@@ -19,6 +19,10 @@ document.getElementById("search").addEventListener("keydown", (e) => {
 
 const snowContainer = document.createElement("div");
 const spotifyInput = document.getElementById("spotify-input");
+const newsContainer = document.getElementById("news-container");
+const refreshBtn = document.querySelector(".refresh-btn");
+fetchNews();
+refreshBtn.addEventListener("click", fetchNews);
 spotifyInput.addEventListener("keypress", handleSpotifyInputUpdate);
 snowContainer.className = "winter-snow-container";
 document.body.appendChild(snowContainer);
@@ -55,4 +59,50 @@ function updateSpotifyPlayer(url) {
       "Invalid Spotify URL. Please copy a link from Spotify (Share -> Copy Link)."
     );
   }
+}
+
+async function fetchNews() {
+  newsContainer.innerHTML =
+    '<li class="news-item" style="text-align:center;">Fetching Top Stories...</li>';
+  try {
+    const response = await fetch(
+      "https://hacker-news.firebaseio.com/v0/topstories.json"
+    );
+    const ids = await response.json();
+    const top15Ids = ids.slice(0, 15);
+    const storyPromises = top15Ids.map((id) =>
+      fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then(
+        (res) => res.json()
+      )
+    );
+    const stories = await Promise.all(storyPromises);
+    renderStories(stories);
+  } catch (error) {
+    console.error(error);
+    newsContainer.innerHTML =
+      '<li class="news-item" style="color:red;">Failed to load news.</li>';
+  }
+}
+
+function renderStories(stories) {
+  newsContainer.innerHTML = "";
+  stories.forEach((story) => {
+    if (!story) return;
+    const li = document.createElement("li");
+    li.className = "news-item";
+    const timeAgo = new Date(story.time * 1000).toLocaleDateString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const domain = story.url
+      ? new URL(story.url).hostname.replace("www", "")
+      : "news.ycombinator.com";
+    li.innerHTML = `
+                <a href="${story.url}" target="_blank" class="news-title">${story.title}</a>
+                <div class="news-meta">
+                    ${story.score} points • ${domain} • ${timeAgo}
+                </div>
+            `;
+    newsContainer.appendChild(li);
+  });
 }
