@@ -72,30 +72,55 @@
         await chrome.tabs.reload(tab.id);
         freezeBtn.innerText = "Freeze Screen";
       } else {
-        const iconUrl = chrome.runtime.getURL("winter.png");
-        const videoUrl = chrome.runtime.getURL("freeze-animation.mp4");
+        const isFrozen = await getFreezeState();
+        if (isFrozen) {
+          await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: () => {
+              document.documentElement.removeAttribute("data-winter-frozen");
+              const overlay = document.getElementById("winter-freeze-overlay");
+              if (overlay) overlay.remove();
+              document.body.style.pointerEvents = "";
+              if (document.title.startsWith("[Frozen] ")) {
+                document.title = document.title.replace("[Frozen] ", "");
+              }
+            },
+          });
+          freezeBtn.innerText = "Freeze Screen";
+        } else {
+          const iconUrl = chrome.runtime.getURL("winter.png");
+          const videoUrl = chrome.runtime.getURL("freeze-animation.mp4");
 
-        await chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          func: (iconUrl, videoUrl) => {
-            document.documentElement.setAttribute("data-winter-frozen", "true");
+          await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: (iconUrl, videoUrl) => {
+              document.documentElement.setAttribute(
+                "data-winter-frozen",
+                "true"
+              );
 
-            if (!document.title.startsWith("[Frozen]")) {
-              document.title = "[Frozen] " + document.title;
-            }
+              if (!document.title.startsWith("[Frozen] ")) {
+                document.title = "[Frozen] " + document.title;
+              }
 
-            const existingFavicons =
-              document.querySelectorAll("link[rel*='icon']");
-            existingFavicons.forEach((link) => link.remove());
-
-            const newFavicon = document.createElement("link");
-            newFavicon.rel = "icon";
-            newFavicon.type = "image/png";
-            newFavicon.href = iconUrl;
-            document.head.appendChild(newFavicon);
-            const overlay = document.createElement("div");
-            overlay.id = "winter-freeze-overlay";
-            overlay.style.cssText = `
+              const existingFavicons =
+                document.querySelectorAll("link[rel*='icon']");
+              existingFavicons.forEach((link) => link.remove());
+              const originalFavicon = existingFavicons[0]?.href || "";
+              if (originalFavicon) {
+                document.documentElement.setAttribute(
+                  "data-original-favicon",
+                  originalFavicon
+                );
+              }
+              const newFavicon = document.createElement("link");
+              newFavicon.rel = "icon";
+              newFavicon.type = "image/png";
+              newFavicon.href = iconUrl;
+              document.head.appendChild(newFavicon);
+              const overlay = document.createElement("div");
+              overlay.id = "winter-freeze-overlay";
+              overlay.style.cssText = `
               position: fixed;
               top: 0;
               left: 0;
@@ -107,9 +132,9 @@
               animation: winterFreezeIn 0.5s ease-out;
               `;
 
-            const video = document.createElement("video");
-            video.src = videoUrl;
-            video.style.cssText = `
+              const video = document.createElement("video");
+              video.src = videoUrl;
+              video.style.cssText = `
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -119,13 +144,13 @@
                 opacity: 0.6;
                 mix-blend-mode: screen;
               `;
-            video.autoplay = true;
-            video.muted = true;
-            video.playsInline = true;
-            overlay.appendChild(video);
+              video.autoplay = true;
+              video.muted = true;
+              video.playsInline = true;
+              overlay.appendChild(video);
 
-            const blurDiv = document.createElement("div");
-            blurDiv.style.cssText = `
+              const blurDiv = document.createElement("div");
+              blurDiv.style.cssText = `
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -134,25 +159,25 @@
                 backdrop-filter: blur(8px) brightness(0.7);
                 z-index: 1;
               `;
-            overlay.appendChild(blurDiv);
+              overlay.appendChild(blurDiv);
 
-            const snowflakeDiv = document.createElement("div");
-            snowflakeDiv.style.cssText = `
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 120px;
-                opacity: 0.5;
-                text-shadow: 0 0 10px white;
-                z-index: 2;
-                animation: winterPulse 2s ease-in-out infinite;
-              `;
-            snowflakeDiv.textContent = "snowflake";
-            // overlay.appendChild(snowflakeDiv);
+              // const snowflakeDiv = document.createElement("div");
+              // snowflakeDiv.style.cssText = `
+              //   position: absolute;
+              //   top: 50%;
+              //   left: 50%;
+              //   transform: translate(-50%, -50%);
+              //   font-size: 120px;
+              //   opacity: 0.5;
+              //   text-shadow: 0 0 10px white;
+              //   z-index: 2;
+              //   animation: winterPulse 2s ease-in-out infinite;
+              // `;
+              // snowflakeDiv.textContent = "snowflake";
+              // overlay.appendChild(snowflakeDiv);
 
-            const style = document.createElement("style");
-            style.textContent = `
+              const style = document.createElement("style");
+              style.textContent = `
                 @keyframes winterFreezeIn {
                   from { opacity: 0; }
                   to { opacity: 1; }
@@ -162,17 +187,18 @@
                   50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
                 }
               `;
-            document.head.appendChild(style);
-            document.body.appendChild(overlay);
-            document.body.style.pointerEvents = "none";
-          },
-          args: [iconUrl, videoUrl],
-        });
+              document.head.appendChild(style);
+              document.body.appendChild(overlay);
+              document.body.style.pointerEvents = "none";
+            },
+            args: [iconUrl, videoUrl],
+          });
 
-        setTimeout(async () => {
-          // await chrome.tabs.discard(tab.id);
-          freezeBtn.innerText = "Unfreeze Screen";
-        }, 600);
+          setTimeout(async () => {
+            // await chrome.tabs.discard(tab.id);
+            freezeBtn.innerText = "Unfreeze Screen";
+          }, 600);
+        }
       }
     } catch (e) {
       console.error("Error toggling freeze:", e);

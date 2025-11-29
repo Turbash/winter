@@ -87,19 +87,26 @@ async function checkAndFreezeInactiveTabs() {
           func: (iconUrl, videoUrl) => {
             document.documentElement.setAttribute("data-winter-frozen", "true");
 
-            if (!document.title.startsWith("[Frozen]")) {
+            if (!document.title.startsWith("[Frozen] ")) {
               document.title = "[Frozen] " + document.title;
             }
 
             const existingFavicons =
               document.querySelectorAll("link[rel*='icon']");
             existingFavicons.forEach((link) => link.remove());
-
+            const originalFavicon = existingFavicons[0]?.href || "";
+            if (originalFavicon) {
+              document.documentElement.setAttribute(
+                "data-original-favicon",
+                originalFavicon
+              );
+            }
             const newFavicon = document.createElement("link");
             newFavicon.rel = "icon";
             newFavicon.type = "image/png";
             newFavicon.href = iconUrl;
             document.head.appendChild(newFavicon);
+            if (document.getElementById("winter-freeze-overlay")) return;
 
             const overlay = document.createElement("div");
             overlay.id = "winter-freeze-overlay";
@@ -150,12 +157,18 @@ async function checkAndFreezeInactiveTabs() {
           },
           args: [iconUrl, videoUrl],
         });
-
-        await chrome.tabs.discard(tab.id);
-        const updatedTab = await chrome.tabs.get(tab.id);
-        console.log(
-          `✓ Successfully froze tab ${tab.id}, discarded: ${updatedTab.discarded}`
-        );
+        try {
+          await chrome.tabs.discard(tab.id);
+          const updatedTab = await chrome.tabs.get(tab.id);
+          console.log(
+            `✓ Successfully froze tab ${tab.id}, discarded: ${updatedTab.discarded}`
+          );
+        } catch (er) {
+          console.log(
+            `Tab ${tab.id} frozen with overlay, but couldn't discard:`,
+            discardError.message
+          );
+        }
       } catch (e) {
         console.error(`✗ Failed to freeze tab ${tab.id}:`, e.message);
       }
